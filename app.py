@@ -45,10 +45,10 @@ def id_img_handler():
         # TODO:
         # store the user id and the image into the DB
         print("User is older than 21!")
-        return responses.get_http_200()
+        return responses.get_http_200(message="true")
     else:
         print("User is NOT older than 21... :(")
-        return responses.get_http_200()
+        return responses.get_http_200(message="false")
 
 
 @app.route("/api/upload_selfie", methods=["POST"])
@@ -83,7 +83,7 @@ def extract_dob(endpoint,id_proof):
         born = dob.value
         today = date.today()
         age = today.year - born.year - ((today.month, today.day) < (born.month, born.day))
-        return age > 21
+        return age >= 21
     else:
         print('Issue with dob parsing')
 
