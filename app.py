@@ -1,5 +1,12 @@
-from flask import Flask, redirect, url_for,session,request, render_template, jsonify
+from flask import Flask, redirect, url_for,session,request, render_template
 import responses
+import os
+from azure.core.exceptions import ResourceNotFoundError
+from azure.ai.formrecognizer import FormRecognizerClient
+from azure.ai.formrecognizer import FormTrainingClient
+from azure.core.credentials import AzureKeyCredential
+from datetime import date
+import base64
 
 # Define a flask app
 app = Flask(__name__)
@@ -24,8 +31,25 @@ def id_img_handler():
     """
     print("id_img_handler has been called!")
     print("request:", request.files)
+    
+    image = request.files["id_image"]
+    save_loc = os.path.join(app.config["UPLOAD_FOLDER"], "tmp.png")
+    with open(save_loc, "wb"):
+        image.save(save_loc)
 
-    return responses.get_http_200()
+    id_api_endpoint = "https://formrecognizeid.cognitiveservices.azure.com/"
+
+    dob_result = extract_dob(id_api_endpoint, save_loc)
+
+    if dob_result:
+        # TODO:
+        # store the user id and the image into the DB
+        print("User is older than 21!")
+        return responses.get_http_200()
+    else:
+        print("User is NOT older than 21... :(")
+        return responses.get_http_200()
+
 
 @app.route("/api/upload_selfie", methods=["POST"])
 def selfie_img_handler():
@@ -38,6 +62,23 @@ def selfie_img_handler():
 
     # TODO: write 
     # compare this image with the ID image
+
+def extract_dob(endpoint,id_proof):
+    form_recognizer_client = FormRecognizerClient(endpoint=endpoint, credential=AzureKeyCredential(app.azure_secret))
+    with open(id_proof, "rb") as f:
+        poller = form_recognizer_client.begin_recognize_identity_documents(identity_document=f)
+    id_documents = poller.result()
+    for idx, id_document in enumerate(id_documents):
+        print("--------Recognizing ID document #{}--------".format(idx+1))
+        dob = id_document.fields.get("DateOfBirth")
+    if dob:
+        print("Date of Birth: {} has confidence: {}".format(dob.value, dob.confidence))
+        born = dob.value
+        today = date.today()
+        age = today.year - born.year - ((today.month, today.day) < (born.month, born.day))
+        return age > 21
+    else:
+        print('Issue with dob parsing')
 
 
 # Route to Data Analysis Page
@@ -192,8 +233,17 @@ class Data:
         self.id_image = None
         self.selfie_image = None
 
+def get_secret_key():
+    with open("keys.txt") as f:
+        key = f.read()
+
+    print(key[key.find("=")+1:])
+    return key[key.find("=")+1:]
+
 if __name__ == '__main__':
     app.secret_key="casdfnjakwhejfwefjkwnemwh87h"
+    app.azure_secret = get_secret_key()
+    app.config["UPLOAD_FOLDER"] = "temp_uploads/"
     app.run(debug=True, port=10061)
     data = Data()
 
