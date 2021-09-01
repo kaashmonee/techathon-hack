@@ -25,10 +25,11 @@ def about():
 @app.route("/api/upload_id", methods=["POST"])
 def id_img_handler():
     """
-    This routine handles ID images that are sent to the server. 
+    This routine handles ID images that are sent to the server...
+    The id_image variable expects a Base64 encoded image...
     """
-    id_image = request.form["id_image"]
     print("id_img_handler has been called!")
+    id_image = request.form["id_image"]
     data.id_image = id_image
 
     # TODO: write the API code here...
@@ -42,6 +43,7 @@ def selfie_img_handler():
     """
     selfie_image = request.form["selfie_image"]
     print("Selfie image handler has been called!")
+    data.selfie_image = selfie_image
 
     # TODO: write 
     # compare this image with the ID image

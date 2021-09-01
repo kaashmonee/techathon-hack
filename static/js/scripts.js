@@ -16,6 +16,26 @@ window.addEventListener('DOMContentLoaded', event => {
         menuToggle.classList.toggle('active');
     })
 
+    /**
+     * Adding an event listener to the id_upload_button click object.
+     * This should then send a POST to the server.
+     */
+    document.getElementById("id_upload_button").addEventListener("click", event => {
+        console.log("click event listener triggered!", event);
+        let inputField = document.getElementById("id_upload_input");
+        inputField.click();
+        inputField.addEventListener("change", () => {
+            console.log("Event listener has been triggered!");
+            let photo = document.getElementById("id_upload_input").files[0];
+            let formData = new FormData();
+
+            formData.append("id_image", photo);
+            fetch("/api/upload_id", {method: "POST", body: formData})
+                .then(response => console.log("response:", response));
+
+        });
+    });
+
     // Closes responsive menu when a scroll trigger link is clicked
     var scrollTriggerList = [].slice.call(document.querySelectorAll('#sidebar-wrapper .js-scroll-trigger'));
     scrollTriggerList.map(scrollTrigger => {
