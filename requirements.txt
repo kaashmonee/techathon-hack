@@ -83,6 +83,8 @@ azure-storage-blob==1.5.0
 azure-storage-common==1.4.2
 azure-storage-file==1.4.0
 azure-storage-queue==1.4.0
+azure-storage-blob==12.8.1
+azure-cognitiveservices-vision-face==0.5.0
 certifi==2021.5.30
 cffi==1.14.6
 charset-normalizer==2.0.4
