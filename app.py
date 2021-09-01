@@ -22,6 +22,31 @@ def home():
 def about():
     return render_template('about_planner.html')
 
+@app.route("/api/upload_id", methods=["POST"])
+def id_img_handler():
+    """
+    This routine handles ID images that are sent to the server. 
+    """
+    id_image = request.form["id_image"]
+    print("id_img_handler has been called!")
+    data.id_image = id_image
+
+    # TODO: write the API code here...
+    # isolate the image from the ID
+    # persist this image to the DB
+
+@app.route("/api/upload_selfie", methods=["POST"])
+def selfie_img_handler():
+    """
+    Handle selfie images that are sent to the server... 
+    """
+    selfie_image = request.form["selfie_image"]
+    print("Selfie image handler has been called!")
+
+    # TODO: write 
+    # compare this image with the ID image
+
+
 # Route to Data Analysis Page
 @app.route('/data', methods = ['GET','POST'])
 def data():
@@ -168,9 +193,16 @@ def getFoliumMapPred(Fwy):
     # redirect(url_for('prediction'))
     #return render_template('index.html')
 
+
+class Data: 
+    def __init__(self):
+        self.id_image = None
+        self.selfie_image = None
+
 if __name__ == '__main__':
     app.secret_key="casdfnjakwhejfwefjkwnemwh87h"
     app.run(debug=True, port=10061)
+    data = Data()
 
 
 
