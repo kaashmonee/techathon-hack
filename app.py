@@ -64,6 +64,13 @@ def selfie_img_handler():
     # compare this image with the ID image
 
 def extract_dob(endpoint,id_proof):
+    """
+    Written by @lokaadithireddy
+    -- param endpoint: the azure api endpoint
+    -- param id_proof: a string that represents the location of the id
+                       in order for this to work, we need to ensure that the image is saved locally
+                       first 
+    """
     form_recognizer_client = FormRecognizerClient(endpoint=endpoint, credential=AzureKeyCredential(app.azure_secret))
     with open(id_proof, "rb") as f:
         poller = form_recognizer_client.begin_recognize_identity_documents(identity_document=f)
