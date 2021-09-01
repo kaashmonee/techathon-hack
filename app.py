@@ -5,7 +5,7 @@ from __future__ import division, print_function
 # Flask utils
 
 
-from flask import Flask, redirect, url_for,session,request, render_template
+from flask import Flask, redirect, url_for,session,request, render_template, jsonify
 
 # Define a flask app
 app = Flask(__name__)
@@ -29,12 +29,12 @@ def id_img_handler():
     The id_image variable expects a Base64 encoded image...
     """
     print("id_img_handler has been called!")
-    id_image = request.form["id_image"]
-    data.id_image = id_image
+    print("request:", request.form.get("id_image"))
 
-    # TODO: write the API code here...
-    # isolate the image from the ID
-    # persist this image to the DB
+    json_data = request.get_json(force=True)
+    image = json_data["id_image"]
+
+    return ("", 204)
 
 @app.route("/api/upload_selfie", methods=["POST"])
 def selfie_img_handler():

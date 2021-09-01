@@ -26,13 +26,21 @@ window.addEventListener('DOMContentLoaded', event => {
         inputField.click();
         inputField.addEventListener("change", () => {
             console.log("Event listener has been triggered!");
-            let photo = document.getElementById("id_upload_input").files[0];
+            let files = document.getElementById("id_upload_input").files;
+            console.log("files:", files);
+            let photo = files[0];
+            console.log("photo:", photo);
             let formData = new FormData();
 
             formData.append("id_image", photo);
-            fetch("/api/upload_id", {method: "POST", body: formData})
-                .then(response => console.log("response:", response));
+            
+            for (let pair of formData.entries()) {
+                console.log(pair[0] + ", " + pair[1]);
+            }
 
+            fetch("/api/upload_id", {method: "POST", body: formData})
+                .then(response => console.log("response:", response))
+                .then(data => console.log("data:", data));
         });
     });
 
