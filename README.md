@@ -7,8 +7,7 @@
 
 
 ```
-export FLASK_APP=main
-flask run
+python app.py
 ```
 
 https://flask.palletsprojects.com/en/2.0.x/quickstart/
