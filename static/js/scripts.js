@@ -24,6 +24,7 @@ window.addEventListener('DOMContentLoaded', event => {
         console.log("click event listener triggered!", event);
         let inputField = document.getElementById("id_upload_input");
         inputField.click();
+
         inputField.addEventListener("change", () => {
             console.log("Event listener has been triggered!");
             let files = document.getElementById("id_upload_input").files;
@@ -33,11 +34,6 @@ window.addEventListener('DOMContentLoaded', event => {
             let formData = new FormData();
 
             formData.append("id_image", photo);
-            
-            for (let pair of formData.entries()) {
-                console.log(pair[0] + ", " + pair[1]);
-            }
-
             fetch("/api/upload_id", {method: "POST", body: formData})
                 .then(response => console.log("response:", response))
                 .then(data => console.log("data:", data));
