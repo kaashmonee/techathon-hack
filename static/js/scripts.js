@@ -40,6 +40,23 @@ window.addEventListener('DOMContentLoaded', event => {
         });
     });
 
+    /**
+     * Sign in button event handler
+     */
+
+    document.getElementById("login_button").addEventListener("click", event => {
+        let username = $("#email_address_input").val();
+        if (username == "") {
+            alert("Please populate the username field.");
+        }
+
+        let formData = new FormData();
+        formData.append("username", username);
+
+        fetch("/api/login", {method: "POST", body: formData})
+            .then(response => console.log("response", response));
+    });
+
     // Closes responsive menu when a scroll trigger link is clicked
     var scrollTriggerList = [].slice.call(document.querySelectorAll('#sidebar-wrapper .js-scroll-trigger'));
     scrollTriggerList.map(scrollTrigger => {
