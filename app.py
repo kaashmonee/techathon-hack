@@ -1,11 +1,5 @@
-from __future__ import division, print_function
-# coding=utf-8
-
-
-# Flask utils
-
-
-from flask import Flask, redirect, url_for,session,request, render_template
+from flask import Flask, redirect, url_for,session,request, render_template, jsonify
+import responses
 
 # Define a flask app
 app = Flask(__name__)
@@ -21,6 +15,30 @@ def home():
 @app.route('/about', methods = ['GET'])
 def about():
     return render_template('about_planner.html')
+
+@app.route("/api/upload_id", methods=["POST"])
+def id_img_handler():
+    """
+    This routine handles ID images that are sent to the server...
+    The id_image variable expects a Base64 encoded image...
+    """
+    print("id_img_handler has been called!")
+    print("request:", request.files)
+
+    return responses.get_http_200()
+
+@app.route("/api/upload_selfie", methods=["POST"])
+def selfie_img_handler():
+    """
+    Handle selfie images that are sent to the server... 
+    """
+    selfie_image = request.form["selfie_image"]
+    print("Selfie image handler has been called!")
+    data.selfie_image = selfie_image
+
+    # TODO: write 
+    # compare this image with the ID image
+
 
 # Route to Data Analysis Page
 @app.route('/data', methods = ['GET','POST'])
@@ -168,9 +186,16 @@ def getFoliumMapPred(Fwy):
     # redirect(url_for('prediction'))
     #return render_template('index.html')
 
+
+class Data: 
+    def __init__(self):
+        self.id_image = None
+        self.selfie_image = None
+
 if __name__ == '__main__':
     app.secret_key="casdfnjakwhejfwefjkwnemwh87h"
     app.run(debug=True, port=10061)
+    data = Data()
 
 
 
