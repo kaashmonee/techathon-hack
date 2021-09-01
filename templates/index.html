@@ -10,6 +10,10 @@
         <link rel="icon" type="image/x-icon" href="assets/favicon.ico" />
         <!-- Font Awesome icons (free version)-->
         <script src="https://use.fontawesome.com/releases/v5.15.3/js/all.js" crossorigin="anonymous"></script>
+        
+        <!-- JQuery -->
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+
         <!-- Simple line icons-->
         <link href="https://cdnjs.cloudflare.com/ajax/libs/simple-line-icons/2.5.5/css/simple-line-icons.min.css" rel="stylesheet" />
         <!-- Google fonts-->
@@ -34,9 +38,17 @@
         <!-- Header-->
         <header class="masthead d-flex align-items-center">
             <div class="container px-4 px-lg-5 text-center">
-                <h1 class="mb-1">Stylish Portfolio</h1>
-                <h3 class="mb-5"><em>A Free Bootstrap Theme by Start Bootstrap</em></h3>
-                <a class="btn btn-primary btn-xl" href="#about">Find Out More</a>
+                <h1 class="mb-1">Techathon Hack</h1>
+                <h3 class="mb-5"><em>Please upload your image to verify your age.</em></h3>
+                <a class="btn btn-primary btn-xl" onclick="chooseFile();">Upload Image</a>
+                <script>
+                    function chooseFile() {
+                        $("#img_upload").click();
+                    }
+                </script>
+                <div style="height:0px;overflow:hidden">
+                    <input id="img_upload" type="file"/>
+                </div>
             </div>
         </header>
         <!-- About-->
