@@ -104,11 +104,32 @@
         <section class="callout">
             <div class="container px-4 px-lg-5 text-center">
                 <h2 class="mx-auto mb-5">
-                    Welcome to
-                    <em>your</em>
-                    next website!
+                    Click a
+                    Picture!
                 </h2>
-                <a class="btn btn-primary btn-xl" href="https://startbootstrap.com/theme/stylish-portfolio/">Download Now!</a>
+
+
+                <!-- Camera -->
+                <form method="POST" enctype="multipart/form-data" id="myForm">
+                    <table>
+                        <tr>
+                            <td>Username:</td>
+                            <td><input type="text" name="userID"></td>
+                        </tr>
+                    </table>
+                    <br/><br/>
+                <table style="margin-left:300px;">
+                        <tr>
+                             <td>
+                                <div id="my_camera"></div>
+                            </td>
+                            <td><div id="results"></div></td>
+                        </tr>
+                    </table>
+                    <br/><br/><br/>
+                <a class="btn btn-primary btn-xl" onclick="snap()" value="Snap">Snap!</a>
+                <a class="btn btn-primary btn-xl" onclick="upload()" value="Snap">Save</a>
+            </form>
             </div>
         </section>
         <!-- Portfolio-->
@@ -203,5 +224,48 @@
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/js/bootstrap.bundle.min.js"></script>
         <!-- Core theme JS-->
         <script src="{{ url_for('static', filename='js/scripts.js') }}"></script>
+        <script src="{{ url_for('static', filename='js/webcam.js') }}"></script> 
+        <script>
+            function ShowCam() {
+                Webcam.set({
+                    width: 320,
+                    height: 240,
+                    image_format: 'jpeg',
+                    jpeg_quality: 100
+                });
+                Webcam.attach('#my_camera');
+            }
+            window.onload= ShowCam;
+
+            function snap() {
+                Webcam.snap( function(data_uri) {
+                    // display results in page
+                    document.getElementById('results').innerHTML = 
+                    '<img id="image" src="'+data_uri+'"/>';
+                  } );      
+            }
+
+            function upload() {
+                console.log("Uploading...")
+                var image = document.getElementById('image').src;
+                var form = document.getElementById('myForm');
+                var formData = new FormData(form);
+                formData.append("file", image);
+                var xmlhttp = new XMLHttpRequest();
+                xmlhttp.open("POST", "/api/upload_selfie");
+
+                // check when state changes, 
+                xmlhttp.onreadystatechange = function() {
+
+                if(xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+                    // alert(xmlhttp.responseText);
+                    }
+                }
+
+                xmlhttp.send(formData);
+                console.log(formData.get('file'));
+                console.log(formData.get('userID'));
+            }
+        </script>
     </body>
 </html>

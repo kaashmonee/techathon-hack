@@ -7,6 +7,8 @@ from azure.ai.formrecognizer import FormTrainingClient
 from azure.core.credentials import AzureKeyCredential
 from datetime import date
 import base64
+from io import BytesIO
+from PIL import Image
 
 # Define a flask app
 app = Flask(__name__)
@@ -60,13 +62,27 @@ def selfie_img_handler():
     """
     Handle selfie images that are sent to the server... 
     """
-    selfie_image = request.form["selfie_image"]
+    # selfie_image = request.form["selfie_image"]
     print("Selfie image handler has been called!")
-    data.selfie_image = selfie_image
+    
+    if request.method == 'POST':
+        file = request.form['file'].split(",")[1]
+        im = Image.open(BytesIO(base64.b64decode(file)))
+        im.save('./temp_uploads/selfie.png', 'PNG')
+    # Load image from local into stream ->(selfie.png)
 
+    # target_image_file_name = open('./temp_uploads/image.png', 'r+b')
+    # target_faces2= face_client.face.detect_with_stream(target_image_file_name, detection_model='detection_03')
+    # target_image_id = target_faces2[0].face_id
+    # data.selfie_image = target_image_id
+    
     # TODO: write 
     # compare this image with the ID image
 
+    return render_template('index.html')
+    
+
+    
 @app.route("/api/login", methods=["POST"])
 def login_handler():
     """
