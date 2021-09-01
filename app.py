@@ -45,6 +45,10 @@ def id_img_handler():
         # TODO:
         # store the user id and the image into the DB
         print("User is older than 21!")
+        data.id_image_path = save_loc
+        data.not_underage = True
+        data.image_not_uploaded = False
+
         return responses.get_http_200(message="true")
     else:
         print("User is NOT older than 21... :(")
@@ -62,6 +66,25 @@ def selfie_img_handler():
 
     # TODO: write 
     # compare this image with the ID image
+
+@app.route("/api/login", methods=["POST"])
+def login_handler():
+    """
+    Handle what happens once the user logs in... 
+    """
+
+    username = request.form["username"]
+    data.username = username
+    print("login handler called successfully")
+    print("username:", username)
+
+    # TODO: 
+    # store temporarily the image and the username in the backend...
+    # obtain the user image and the user 
+    # persist the username and the image to the db
+    # at this stage, the user image should be populated...
+    return responses.get_http_200()
+
 
 def extract_dob(endpoint,id_proof):
     """
@@ -237,8 +260,11 @@ def getFoliumMapPred(Fwy):
 
 class Data: 
     def __init__(self):
-        self.id_image = None
+        self.id_image_path = None
         self.selfie_image = None
+        self.not_underage = False
+        self.username = ""
+        self.image_not_uploaded = True
 
 def get_secret_key():
     with open("keys.txt") as f:
