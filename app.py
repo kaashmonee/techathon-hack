@@ -1,10 +1,12 @@
 from flask import Flask, redirect, url_for,session,request, render_template
 import responses
-import os
+import os, sys
 from azure.core.exceptions import ResourceNotFoundError
 from azure.ai.formrecognizer import FormRecognizerClient
 from azure.ai.formrecognizer import FormTrainingClient
 from azure.core.credentials import AzureKeyCredential
+from azure.storage.blob import BlobServiceClient, BlobClient, ContainerClient, __version__
+from shutil import copyfile
 from datetime import date
 import base64
 from io import BytesIO
@@ -38,6 +40,8 @@ def id_img_handler():
     save_loc = os.path.join(app.config["UPLOAD_FOLDER"], "tmp.png")
     with open(save_loc, "wb"):
         image.save(save_loc)
+
+    store_custid_image_and_path("wmt_user", save_loc)
 
     id_api_endpoint = "https://formrecognizeid.cognitiveservices.azure.com/"
 
@@ -288,6 +292,42 @@ def get_secret_key():
 
     print(key[key.find("=")+1:])
     return key[key.find("=")+1:]
+
+
+def store_custid_image_and_path(username: str, save_loc:str):
+    #get the username and save_loc path , insert a record in the db , path , and store image with renamed in blob storage
+    conn_server = 'gtech.database.windows.net'
+    conn_database = 'customers'
+    conn_username = 'rootadmin'
+    conn_password = 'DoesItReallyMatter199'
+    conn_driver = '{ODBC Driver 17 for SQL Server}'
+
+    # store image in blob storage
+    os.environ["AZURE_STORAGE_CONNECTION_STRING"] = "DefaultEndpointsProtocol=https;AccountName=wmtcustinfo;AccountKey=+42Znv+7y6OQGNrgrnLqWnVwmq3S5lEGY1hS0zaUm7ayEzCgI0ZuFd89/G9e1BPg6uNYWFXqJNG35TflTRQCEw==;EndpointSuffix=core.windows.net"
+    connect_str = os.getenv('AZURE_STORAGE_CONNECTION_STRING')
+    container_name="wmtcustinfo"
+    blob_service_client = BlobServiceClient.from_connection_string(connect_str)
+    base_dir = os.path.dirname(save_loc)
+    user_id_filename = F'{username}_user_identification_card.jpg'
+    upload_file_path = base_dir + user_id_filename
+    print("save_loc = {0}".format(save_loc))
+    print("upload_file_path = {0}".format(upload_file_path))
+    print("copying customer id to new file path")
+    copyfile(save_loc, upload_file_path)
+    blob_client = blob_service_client.get_blob_client(container=container_name, blob=user_id_filename)
+    # Upload the created file
+    with open(upload_file_path, "rb") as data:
+        blob_client.upload_blob(data)
+    print("upload complete ")
+    blob_url="https://wmtcustinfo.blob.core.windows.net/wmtcustinfo/" + user_id_filename
+
+    try:
+        with pyodbc.connect('DRIVER=' + conn_driver + ';SERVER=tcp:' + conn_server + ';PORT=1433;DATABASE=' + conn_database + ';UID=' + conn_username + ';PWD=' + conn_password) as conn:
+            with conn.cursor() as cursor:
+                cursor.execute("""insert into dbo.wmt_cust_account (username,id,dob,userid_photo_path) values ('{0}' , null,null , '{1}') """.format(username, blob_url))
+    except:
+        print("Unexpected error:", sys.exc_info())
+        exit(1)
 
 if __name__ == '__main__':
     app.secret_key="casdfnjakwhejfwefjkwnemwh87h"
