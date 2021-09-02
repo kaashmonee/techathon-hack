@@ -75,6 +75,10 @@
         <!-- Callout-->
         <section class="callout">
             <div class="container px-4 px-lg-5 text-center">
+                <div class="mb-3">
+                    <label for="exampleFormControlInput1" class="form-label" style="color:black">Username: </label>
+                    <input class="form-control" id="selfie_user_input" placeholder="username">
+                </div>
                 <h2 class="mx-auto mb-5" style="margin-top:-200px;">
                     Please take a Snap! to verify
                 </h2>
@@ -158,15 +162,21 @@
                 var form = document.getElementById('myForm');
                 var formData = new FormData(form);
                 formData.append("file", image);
+                let selfie_username = $("#selfie_user_input").val();
+                formData.append("selfie_username", selfie_username);
                 var xmlhttp = new XMLHttpRequest();
                 xmlhttp.open("POST", "/api/upload_selfie");
 
                 // check when state changes, 
                 xmlhttp.onreadystatechange = function() {
 
-                if(xmlhttp.readyState == 4 && xmlhttp.status == 200) {
-                    // alert(xmlhttp.responseText);
+                    if(xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+                        // alert(xmlhttp.responseText);
+                        alert("Verification successful. Please scan your items.");
+                    } else {
+                        alert("FaceID verification unsuccessful. Please wait for an associate.")
                     }
+
                 }
 
                 xmlhttp.send(formData);

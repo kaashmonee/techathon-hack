@@ -29,6 +29,7 @@ class Data:
         self.not_underage = False
         self.username = ""
         self.image_not_uploaded = True
+        self.selfie_username = None
 
 data = Data()
 
@@ -96,21 +97,15 @@ def selfie_img_handler():
         im.save('./temp_uploads/selfie.png', 'PNG')
     # Load image from local into stream ->(selfie.png)
 
-    # target_image_id = target_faces2[0].face_id
-    # data.selfie_image = target_image_id
-
-    # TODO: write 
-    # compare this image with the ID image
-    # use blob URL to obtain ID image
-    # compare faceids
-    # verify faces using direct url 
+    data.selfie_username = request.form["selfie_username"]
+    print("data.selfie_username:", data.selfie_username)
 
     IMAGE_BASE_URL = "https://wmtcustinfo.blob.core.windows.net/wmtcustinfo/"
     ENDPOINT = "https://face-wmt-hackathon.cognitiveservices.azure.com/"
     face_client = FaceClient(ENDPOINT, CognitiveServicesCredentials(app.FACE_KEY))
 
 
-    source_image_file_name1 = IMAGE_BASE_URL + "wmt_user8" + "_user_identification_card.jpg" 
+    source_image_file_name1 = IMAGE_BASE_URL + data.selfie_username + "_user_identification_card.jpg" 
 
     print("source_iage_file_name1:", source_image_file_name1)
     source_faces1 = face_client.face.detect_with_url(source_image_file_name1, detection_model='detection_03')
@@ -129,7 +124,7 @@ def selfie_img_handler():
 
     print("The images do not match.")
     abort(404)
-    
+
 
     
 @app.route("/api/login", methods=["POST"])

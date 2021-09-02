@@ -65,18 +65,9 @@ window.addEventListener('DOMContentLoaded', event => {
         fetch("/api/login", {method: "POST", body: formData})
             .then(response => {
                 alert("Logged in!");
-                // const status = response.headers.get("status");
-                // console.log("status:", status);
-                // let toastTrigger = document.getElementById("toastTrigger");
-                // let toastLiveExample = document.getElementById("liveToast");
-                // // if (toastTrigger) {
-                // toastTrigger.addEventListener("click", () => {
-                //     let toast = new bootstrap.Toast(toastLiveExample);
-                //     toast.show();
-                // });
-                // }
             });
     });
+
 
     // Closes responsive menu when a scroll trigger link is clicked
     var scrollTriggerList = [].slice.call(document.querySelectorAll('#sidebar-wrapper .js-scroll-trigger'));
