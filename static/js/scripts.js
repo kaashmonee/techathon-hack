@@ -35,7 +35,16 @@ window.addEventListener('DOMContentLoaded', event => {
 
             formData.append("id_image", photo);
             fetch("/api/upload_id", {method: "POST", body: formData})
-                .then(response => console.log("response:", response))
+                .then(response => {
+                    console.log("response:", response);
+                    if (!response.ok) {
+                        alert("User's age was unable to be detected or the user is under 21.");
+                    } else {
+                        alert("Successfully verified!");
+                        $("#id_upload_button").click(e => e.preventDefault());
+                        console.log("Successfully verified!");
+                    }
+                })
                 .then(data => console.log("data:", data));
         });
     });
@@ -54,7 +63,19 @@ window.addEventListener('DOMContentLoaded', event => {
         formData.append("username", username);
 
         fetch("/api/login", {method: "POST", body: formData})
-            .then(response => console.log("response", response));
+            .then(response => {
+                alert("Logged in!");
+                // const status = response.headers.get("status");
+                // console.log("status:", status);
+                // let toastTrigger = document.getElementById("toastTrigger");
+                // let toastLiveExample = document.getElementById("liveToast");
+                // // if (toastTrigger) {
+                // toastTrigger.addEventListener("click", () => {
+                //     let toast = new bootstrap.Toast(toastLiveExample);
+                //     toast.show();
+                // });
+                // }
+            });
     });
 
     // Closes responsive menu when a scroll trigger link is clicked

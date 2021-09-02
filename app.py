@@ -59,7 +59,10 @@ def id_img_handler():
     with open(save_loc, "wb"):
         image.save(save_loc)
 
-    store_custid_image_and_path("wmt_user8", save_loc)
+    # saving username to the save loc
+    print("data.username:", data.username)
+    print("save_loc:", save_loc)
+    store_custid_image_and_path(data.username, save_loc)
 
     id_api_endpoint = "https://formrecognizeid.cognitiveservices.azure.com/"
 
@@ -76,7 +79,7 @@ def id_img_handler():
         return responses.get_http_200()
     else:
         print("User is NOT older than 21... :(")
-        return responses.get_http_200()
+        abort(404)
 
 
 @app.route("/api/upload_selfie", methods=["POST"])
@@ -157,6 +160,8 @@ def extract_dob(endpoint,id_proof):
                        first 
     """
     form_recognizer_client = FormRecognizerClient(endpoint=endpoint, credential=AzureKeyCredential(app.OCR_KEY))
+    print("authenticated with OCR key")
+    print("id_proof:", id_proof)
     with open(id_proof, "rb") as f:
         poller = form_recognizer_client.begin_recognize_identity_documents(identity_document=f)
     id_documents = poller.result()
@@ -211,8 +216,12 @@ def store_custid_image_and_path(username: str, save_loc:str):
 if __name__ == '__main__':
     config = configparser.ConfigParser()
     config.read("properties.ini")
-    app.OCR_KEY = config["KEYS"]["ocr_key"]
-    app.FACE_KEY = config["KEYS"]["face_key"]
+    app.OCR_KEY = config["KEYS"]["ocr_key"].strip()
+    app.FACE_KEY = config["KEYS"]["face_key"].strip()
+
+    # Verifying that the app key and the ocr key are correct
+    print("app.OCR_KEY:", app.OCR_KEY)
+    print("app.FACE_KEY:", app.FACE_KEY)
     app.config["UPLOAD_FOLDER"] = "temp_uploads/"
     app.run(debug=True, port=10061)
 
